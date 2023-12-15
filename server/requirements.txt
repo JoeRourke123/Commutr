@@ -1,0 +1,12 @@
+django
+djangorestframework   # we need the serialization
+djangogrpcframework
+grpcio
+grpcio-tools
+psycopg2-binary
+redis
+celery
+feedparser
+selenium
+webdriver-manager
+pypdf2
