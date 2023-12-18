@@ -8,6 +8,14 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
+
+-----
+from @Joe Rourke:
+The important stuff in here really is:
+* INSTALLED_APPS (the Django "apps" currently being used)
+* ALLOWED_HOSTS (needs to be updated when new URLs are being used for UI/clients)
+* DATABASES (contains the Postgres config for connecting to the db)
+
 """
 import os
 from datetime import datetime
