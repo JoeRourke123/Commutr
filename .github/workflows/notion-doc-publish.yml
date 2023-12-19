@@ -31,13 +31,13 @@ jobs:
     - name: Generate Markdown of Docs
       run: |
         mkdir docs &&
-        pydoc-markdown -p commutr.controller -p commutr.db -p commutr.domain -p commutr.management.commands '{B
+        pydoc-markdown -p commutr.controller -p commutr.db -p commutr.domain -p commutr.management.commands '{
           renderer: {
             type: markdown,
             descriptive_class_title: false, docstrings_as_blockquote: true, render_typehint_in_data_header: true,
             render_toc: false, data_code_block: true, insert_header_anchors: false
           }
-        }' > docs/commutr.md
+        }'  > docs/commutr.md
 
     - name: Replace Broken Code in Notion Library
       run: |
