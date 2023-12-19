@@ -28,6 +28,9 @@ jobs:
         cache-dependency-path: |
           server/requirements.txt
         install-cmd: pip install -r server/requirements.txt
+    - name: Set Environment Variables
+      run: |
+        echo "commutr_postgres_password=${{ secrets.COMMUTR_POSTGRES_PASSWORD }}" >> $GITHUB_ENV
     - name: Generate Markdown of Docs
       run: |
         mkdir docs &&
