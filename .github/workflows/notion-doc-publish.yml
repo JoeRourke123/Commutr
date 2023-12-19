@@ -30,8 +30,6 @@ jobs:
         install-cmd: pip install -r server/requirements.txt
     - name: Generate Markdown of Docs
       run: |
-        pwd &&
-        cd server &&
         pydoc-markdown -p commutr.controller -p commutr.db -p commutr.domain -p commutr.management.commands '{B
           renderer: {
             type: markdown,
@@ -42,12 +40,8 @@ jobs:
 
     - name: Replace Broken Code in Notion Library
       run: |
-        pwd &&
-        cd server &&
         sed -i 's/100000/100/g' venv/lib/python3.11/site-packages/notion/store.py
 
     - name: Add Docs to Notion
       run: |
-        pwd &&
-        cd server &&
         python manage.py publish_docs_to_notion ${{ secrets.NOTIONTOKENV2 }} ${{ secrets.NOTIONDOCUMENTATIONPAGEURL }}
