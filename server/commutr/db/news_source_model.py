@@ -11,29 +11,23 @@ class NewsSource(models.Model):
     Represents a single news source/vendor
     """
 
-    # Unique identifier used for sources internally by us
-    id = models.UUIDField(default=uuid.uuid4, primary_key=True, db_column="source_id")
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, db_column="source_id")  # Unique identifier used for sources internally by us
 
-    # e.g. The Guardian
-    name = models.CharField(db_column="source_name", editable=False)
+    name = models.CharField(db_column="source_name", editable=False)    # e.g. The Guardian
 
-    # The URL of the RSS feed we scrape articles from for this source
-    rss_url = models.URLField(db_column="source_rss_feed_url", editable=False)
+    rss_url = models.URLField(db_column="source_rss_feed_url", editable=False)  # The URL of the RSS feed we scrape articles from for this source
 
-    # -1 is very left-wing, 1 is very conservative. 0 is centrism.
     political_leaning = models.FloatField(validators=(
         validators.MinValueValidator(-1.0),
         validators.MaxValueValidator(1.0),
-    ), db_column="source_political_leaning", editable=False)
+    ), db_column="source_political_leaning", editable=False)    # -1 is very left-wing, 1 is very conservative. 0 is centrism.
 
-    # The date/time of the most recent article scraped, used to identify which articles
-    # have already been pulled
     latest_article = models.DateTimeField(
         db_column="source_latest_article",
         default=datetime(1970, 1, 1),
         null=True,
         editable=True
-    )
+    ) # The date/time of the most recent article scraped, used to identify which articles have already been pulled
 
     # -- The Keys --
     # So these key fields are used to represent where to find certain data in the source's RSS response
