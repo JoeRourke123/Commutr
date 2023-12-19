@@ -30,9 +30,8 @@ jobs:
         install-cmd: pip install -r server/requirements.txt
     - name: Generate Markdown of Docs
       run: |
-        source venv/bin/activate &&
         mkdir docs &&
-        pydoc-markdown -p commutr.controller -p commutr.db -p commutr.domain -p commutr.management.commands '{B
+        python -m pydoc-markdown -p commutr.controller -p commutr.db -p commutr.domain -p commutr.management.commands '{B
           renderer: {
             type: markdown,
             descriptive_class_title: false, docstrings_as_blockquote: true, render_typehint_in_data_header: true,
