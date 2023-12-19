@@ -7,13 +7,13 @@ on:
   push:
     branches: [ "main" ]
 
-defaults:
-  run:
-    working-directory: ./server
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./scripts # <- sets the directory from which to run the bash script
 
     steps:
     - uses: actions/checkout@v3
@@ -24,12 +24,14 @@ jobs:
     - uses: getsentry/action-setup-venv@v1.0.4
       id: venv
       with:
+        working-directory: './server'
         python-version: 3.10.7
         cache-dependency-path: |
           requirements.txt
         install-cmd: pip install -r requirements.txt
     - name: Generate Markdown of Docs
       run: |
+        cd server &&
         pydoc-markdown -p commutr.controller -p commutr.db -p commutr.domain -p commutr.management.commands '{B
           renderer: {
             type: markdown,
@@ -40,8 +42,10 @@ jobs:
 
     - name: Replace Broken Code in Notion Library
       run: |
-        sed -i 's/100000/100/g' 
+        cd server &&
+        sed -i 's/100000/100/g' venv/lib/python3.11/site-packages/notion/store.py
 
     - name: Add Docs to Notion
       run: |
+        cd server &&
         python manage.py publish_docs_to_notion ${{ secrets.NOTIONTOKENV2 }} ${{ secrets.NOTIONDOCUMENTATIONPAGEURL }}
