@@ -7,6 +7,7 @@ from commutr.celery import app
 from commutr.db.news_article_model import NewsArticle
 from commutr.db.news_article_topic_model import NewsArticleTopic
 from commutr.db.news_source_model import NewsSource
+from commutr.domain.pdf import download_article_content_pdf
 from commutr.domain.rss.util import get_rss_entry_data
 
 from django.db.utils import IntegrityError
@@ -81,6 +82,9 @@ def get_rss_articles(news_source: NewsSource):
         except KeyError:
             # Happens when we cannot find the topics in the RSS feed
             continue
+
+        # Fetch the article content through an async celery task
+        download_article_content_pdf(article)
 
     news_source.latest_article = latest_article
     news_source.save()
