@@ -41,7 +41,7 @@ jobs:
 
     - name: Replace Broken Code in Notion Library
       run: |
-        sed -i 's/100000/100/g' venv/lib/python3.11/site-packages/notion/store.py
+        sed -i 's/100000/100/g' venv/lib/python3.10/site-packages/notion/store.py
 
     - name: Add Docs to Notion
       run: |
