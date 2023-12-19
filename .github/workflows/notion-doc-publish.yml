@@ -44,4 +44,4 @@ jobs:
 
     - name: Add Docs to Notion
       run: |
-        python manage.py publish_docs_to_notion ${{ secrets.NotionTokenV2 }} ${{ secrets.NotionDocumentationPageURL }}
+        python manage.py publish_docs_to_notion ${{ secrets.NOTIONTOKENV2 }} ${{ secrets.NOTIONDOCUMENTATIONPAGEURL }}
