@@ -30,6 +30,7 @@ jobs:
         install-cmd: pip install -r server/requirements.txt
     - name: Generate Markdown of Docs
       run: |
+        source venv/bin/activate &&
         mkdir docs &&
         pydoc-markdown -p commutr.controller -p commutr.db -p commutr.domain -p commutr.management.commands '{B
           renderer: {
@@ -45,4 +46,5 @@ jobs:
 
     - name: Add Docs to Notion
       run: |
+        source venv/bin/activate &&
         python manage.py publish_docs_to_notion ${{ secrets.NOTIONTOKENV2 }} ${{ secrets.NOTIONDOCUMENTATIONPAGEURL }}
