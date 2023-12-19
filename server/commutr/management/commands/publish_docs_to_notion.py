@@ -17,10 +17,31 @@ class Command(BaseCommand):
 
         docs_page.locked = False
 
-        with open("docs/commutr.md", "r", encoding="utf-8") as docs_file:
+        with open("docs/commutr.md", "r+", encoding="utf-8") as docs_file:
             for child in docs_page.children[1:]:
                 child.remove()
 
+            previous_line = ""
+            trimmed_docs_file = ""
+            for line in docs_file.readlines():
+                if not line.strip():
+                    trimmed_docs_file += line
+                    continue
+
+                if line.startswith("# ") and previous_line.startswith("# "):
+                    previous_line = line
+                else:
+                    if previous_line.startswith("# "):
+                        trimmed_docs_file += "---- \n"
+
+                    trimmed_docs_file += previous_line
+                    previous_line = line
+
+            docs_file.truncate(0)
+            docs_file.seek(0)
+            docs_file.write(trimmed_docs_file)
+
+        with open("docs/commutr.md", "r", encoding="utf-8") as docs_file:
             upload(docs_file, docs_page)
 
         docs_page.locked = True
