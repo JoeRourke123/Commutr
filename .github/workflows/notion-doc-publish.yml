@@ -33,7 +33,6 @@ jobs:
         echo "commutr_postgres_password=${{ secrets.COMMUTR_POSTGRES_PASSWORD }}" >> $GITHUB_ENV
     - name: Generate Markdown of Docs
       run: |
-        mkdir docs &&
         pydoc-markdown -p commutr.controller -p commutr.db -p commutr.domain -p commutr.management.commands '{
           renderer: {
             type: markdown,
