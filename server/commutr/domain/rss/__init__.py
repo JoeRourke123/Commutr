@@ -11,6 +11,19 @@ from commutr.domain.rss.util import get_rss_entry_data
 
 from django.db.utils import IntegrityError
 
+
+@app.task
+def run_rss_workers():
+    """
+    A Celery beat task which will run every 20 minutes (setup in server.tasks) which will deploy
+    jobs to fetch RSS feeds for each news source in the database
+    """
+    all_sources = NewsSource.objects.all()
+
+    for source in all_sources:
+        get_rss_articles(source)
+
+
 @app.task
 def get_rss_articles(news_source: NewsSource):
     """
@@ -19,17 +32,21 @@ def get_rss_articles(news_source: NewsSource):
 
     Args:
         news_source: a NewsSource instance to scrape articles from
-
-    Returns:
-        N/A.
     """
 
     # Parse the RSS data from the source's feed
     rss_feed = feedparser.parse(news_source.rss_url)
 
+    latest_article = news_source.latest_article
+
     for entry in rss_feed.entries:
         # Get the date of the published article
-        published_date: time.struct_time = get_rss_entry_data(news_source.published_key, entry)
+        published_time: time.struct_time = get_rss_entry_data(news_source.published_key, entry)
+        published_datetime = datetime.fromtimestamp(time.mktime(published_time))
+
+        # If article was published before last fetch then we must have already scraped it
+        if published_datetime <= latest_article:
+            continue
 
         # Create the new article with the data we fetched from the RSS feed, based on the news source's
         # specific field keys from the database
@@ -39,7 +56,7 @@ def get_rss_articles(news_source: NewsSource):
             subtitle=get_rss_entry_data(news_source.subtitle_key, entry),
             url=get_rss_entry_data(news_source.url_key, entry),
             image=get_rss_entry_data(news_source.image_key, entry),
-            published=datetime.fromtimestamp(time.mktime(published_date))
+            published=published_datetime
         )
 
         article.save()
@@ -63,6 +80,9 @@ def get_rss_articles(news_source: NewsSource):
                     continue
         except KeyError:
             # Happens when we cannot find the topics in the RSS feed
-            return
+            continue
+
+    news_source.latest_article = latest_article
+    news_source.save()
 
     print("----------------------------------------------------")
