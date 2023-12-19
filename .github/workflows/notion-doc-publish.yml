@@ -27,8 +27,8 @@ jobs:
         venv-dir: './server/venv'
         python-version: 3.10.7
         cache-dependency-path: |
-          requirements.txt
-        install-cmd: pip install -r requirements.txt
+          server/requirements.txt
+        install-cmd: pip install -r server/requirements.txt
     - name: Generate Markdown of Docs
       run: |
         cd server &&
