@@ -24,7 +24,7 @@ jobs:
     - uses: getsentry/action-setup-venv@v1.0.4
       id: venv
       with:
-        working-directory: './server'
+        venv-dir: './server/venv'
         python-version: 3.10.7
         cache-dependency-path: |
           requirements.txt
