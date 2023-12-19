@@ -12,3 +12,6 @@ webdriver-manager
 pypdf2
 notion_client
 django_celery_beat
+pydoc-markdown
+md2notion
+urllib3<2
