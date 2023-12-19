@@ -11,6 +11,15 @@ from commutr.domain.rss.util import get_rss_entry_data
 
 from django.db.utils import IntegrityError
 
+
+@app.task
+def run_rss_workers():
+    all_sources = NewsSource.objects.all()
+
+    for source in all_sources:
+        get_rss_articles(source)
+
+
 @app.task
 def get_rss_articles(news_source: NewsSource):
     """
