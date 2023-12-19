@@ -11,6 +11,13 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
+from server.tasks import setup_rss_job
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings')
 
+# App Startup Code
+setup_rss_job()
+
 application = get_wsgi_application()
+
+
