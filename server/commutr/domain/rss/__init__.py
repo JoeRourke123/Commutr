@@ -14,6 +14,10 @@ from django.db.utils import IntegrityError
 
 @app.task
 def run_rss_workers():
+    """
+    A Celery beat task which will run every 20 minutes (setup in server.tasks) which will deploy
+    jobs to fetch RSS feeds for each news source in the database
+    """
     all_sources = NewsSource.objects.all()
 
     for source in all_sources:
