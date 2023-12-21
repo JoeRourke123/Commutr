@@ -140,3 +140,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+NOTION_API_TOKEN = os.environ["commutr_notion_token"]
+NEWS_SOURCES_BASE_ID = os.environ["commutr_news_source_notion_id"]
