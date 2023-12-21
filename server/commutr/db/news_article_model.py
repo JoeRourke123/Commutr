@@ -1,8 +1,9 @@
 import uuid
 
-from django.db import models
+from djongo import models
 
 from commutr.db.news_source_model import NewsSource
+from commutr.db.news_topic_model import NewsTopic
 
 
 class NewsArticle(models.Model):
@@ -23,7 +24,8 @@ class NewsArticle(models.Model):
         on_delete=models.CASCADE,
         related_name="articles",
         db_column="news_source_id",
-        editable=False
+        editable=False,
+        max_length=128
     )
 
     headline = models.CharField(
@@ -60,7 +62,14 @@ class NewsArticle(models.Model):
 
     author = models.CharField(
         db_column="article_author",
-        editable=False
+        editable=False,
+        max_length=256
+    )
+
+    topics = models.ArrayField(
+        db_column="article_topics",
+        model_container=NewsTopic,
+        default=[]
     )
 
     class Meta:

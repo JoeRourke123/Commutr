@@ -90,12 +90,8 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'commutr',
-        'USER': 'postgres',
-        'PASSWORD': os.environ["commutr_postgres_password"],
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'djongo',
+        'NAME': 'commutr-mongo'
     }
 }
 
