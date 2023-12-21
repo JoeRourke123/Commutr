@@ -1,5 +1,4 @@
 import 'package:commutr/app/data/article_model.dart';
-import 'package:commutr/app/modules/article/views/article_view.dart';
 import 'package:cupertino_rounded_corners/cupertino_rounded_corners.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gradients_reborn/flutter_gradients_reborn.dart';

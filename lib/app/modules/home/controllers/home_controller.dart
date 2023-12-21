@@ -5,6 +5,7 @@ import '../../../data/article_model.dart';
 
 class HomeController extends GetxController {
   final loading = false.obs;
+  var pageIndex = 0.obs;
   List<Article> articles = List<Article>.empty().obs;
 
   @override
@@ -30,7 +31,7 @@ class HomeController extends GetxController {
     try {
       loading(true);
 
-      articles = await ArticlesService.getArticles();
+      // articles = await ArticlesService.getArticles();
     } finally {
       loading(false);
     }

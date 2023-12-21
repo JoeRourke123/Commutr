@@ -1,11 +1,18 @@
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:commutr/app/components/digest/sections/horoscope_section_intro.dart';
+import 'package:commutr/app/components/digest/sections/login_demo.dart';
+import 'package:commutr/app/components/digest/sections/playlist_section_intro.dart';
+import 'package:commutr/app/components/digest/sections/stock_section_intro.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter/material.dart';
+import 'package:funvas/funvas.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:super_cupertino_navigation_bar/super_cupertino_navigation_bar.dart';
+import 'package:widget_and_text_animator/widget_and_text_animator.dart';
 
-import '../../../components/article_card.dart';
+import '../../../components/funvas/arrows_funvas.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -13,56 +20,64 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-        child: SuperCupertinoNavigationBar(
-            automaticallyImplyLeading: false,
-            largeTitle: Text("Commutr",
-                style: GoogleFonts.cabin(
-                    fontWeight: FontWeight.bold, fontStyle: FontStyle.italic)),
-            appBarType: AppBarType.LargeTitleWithPinnedSearch,
-            previousPageTitle: "Widgets",
-            padding: EdgeInsetsDirectional.symmetric(vertical: 20),
-            stretch: true,
-            avatarModel: AvatarModel(
-              avatarIsVisible: true,
-              onTap: null,
-              avatarIconColor: CupertinoColors.systemPurple,
-              icon: CupertinoIcons.profile_circled,
-            ),
-            slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  left: 15.0, right: 15.0, top: 10.0, bottom: 15),
-              child: Text(
-                "Your Articles",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
+    return Scaffold(
+      body: Builder(
+        builder: (context) {
+          final double height = MediaQuery
+              .of(context)
+              .size
+              .height;
+          final double width = MediaQuery
+              .of(context)
+              .size
+              .width;
+          return Stack(
+            alignment: Alignment.bottomLeft,
+            children: [
+              CarouselSlider(
+                  options: CarouselOptions(
+                    height: height,
+                    viewportFraction: 1.0,
+                    enlargeCenterPage: false,
+                    autoPlay: false,
+                    onPageChanged: (pageIndex, _) => {
+                      controller.pageIndex(pageIndex)
+                    }
+                  ),
+                  items: [
+                    StockSectionIntro(width, height),
+                    HoroscopeSectionIntro(width, height),
+                    PlaylistSectionIntro(width, height),
+                    LoginDemo(width, height)
+                  ]),
+              Container(
+                width: width,
+                height: 22,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5)
                 ),
               ),
-            ),
-          ),
-          SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            sliver: controller.loading.value
-                ? SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: SpinKitFadingCircle(
-                        color: CupertinoColors.systemPurple,
-                      ),
-                    ))
-                : SliverAnimatedList(
-                    itemBuilder: (context, articleIndex, _b) {
-                      final article = controller.articles[articleIndex];
-                      return ArticleCard(
-                        article: article,
-                      );
-                    },
-                    initialItemCount: controller.articles.length,
-                  ),
-          )
-        ]));
+              Obx(() => AnimatedContainer(
+                // Use the properties stored in the State class.
+                width: width * ((controller.pageIndex.value + 1) / 4),
+                height: 22,
+                decoration: BoxDecoration(
+                  color: [
+                    Colors.white38,
+                    Colors.brown.shade300,
+                    Colors.green.shade300,
+                    Colors.lightBlue.shade300
+                  ][controller.pageIndex.value],
+                ),
+                // Define how long the animation should take.
+                duration: const Duration(seconds: 1),
+                // Provide an optional curve to make the animation feel smoother.
+                curve: Curves.fastOutSlowIn,
+              ))
+            ],
+          );
+        },
+      ),
+    );
   }
 }

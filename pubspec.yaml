@@ -21,6 +21,12 @@ dependencies:
   json_annotation: any
   cupertino_icons: ^1.0.2
   cupertino_rounded_corners: any
+  workmanager: any
+  carousel_slider: any
+  funvas: any
+  widget_and_text_animator: any
+  social_login_buttons: any
+  open_simplex_2: any
   get: 4.6.6
   http: any
   flutter: 
@@ -35,4 +41,5 @@ dev_dependencies:
 
 flutter: 
   uses-material-design: true
-
+  assets:
+    - assets/images/
