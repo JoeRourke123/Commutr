@@ -2,8 +2,10 @@ from commutr.celery import app
 
 from notion_client import Client
 
+from commutr.db.news_source_keys import NewsSourceKeys
 from commutr.db.news_source_model import NewsSource
-from commutr.db.news_source_topic_model import NewsSourceTopic
+
+from commutr.db.news_topic_model import NewsTopic
 from server import settings
 
 
@@ -18,31 +20,26 @@ def reload_news_sources_from_notion():
         name = news_source["properties"]["name"]["title"][0]["plain_text"]
         rss_url = news_source["properties"]["rss_url"]["rich_text"][0]["plain_text"]
         political_leaning = news_source["properties"]["political_leaning"]["number"]
-        author_key = news_source["properties"]["author_key"]["rich_text"][0]["plain_text"]
-        headline_key = news_source["properties"]["headline_key"]["rich_text"][0]["plain_text"]
-        image_key = news_source["properties"]["image_key"]["rich_text"][0]["plain_text"]
-        published_key = news_source["properties"]["published_key"]["rich_text"][0]["plain_text"]
-        subtitle_key = news_source["properties"]["subtitle_key"]["rich_text"][0]["plain_text"]
-        url_key = news_source["properties"]["url_key"]["rich_text"][0]["plain_text"]
+
+        keys = ["author_key", "headline_key", "image_key", "published_key", "subtitle_key", "url_key", "topics_key"]
+        key_map = {}
+
+        for key in keys:
+            try:
+                key_map[key] = news_source["properties"][key]["rich_text"][0]["plain_text"]
+            except IndexError or KeyError:
+                key_map[key] = None
+
+        topics = news_source["properties"]["topics"]["multi_select"]
 
         # website_url = news_source["properties"]["value"]["rich_text"][0]["plain_text"]
 
         news_source, created = NewsSource.objects.update_or_create(
             name=name,
             defaults={
-                "rss_url": rss_url, "political_leaning": political_leaning, "author_key": author_key,
-                "headline_key": headline_key, "image_key": image_key, "published_key": published_key,
-                "subtitle_key": subtitle_key, "url_key": url_key
+                "rss_url": rss_url, "political_leaning": political_leaning, "keys": key_map,
+                "topics": [{"topic": t["name"]} for t in topics]
             }
         )
+
         news_source.save()
-
-        topics = news_source["properties"]["topics"]["multi_select"]
-
-        for topic in topics:
-            topic, created = NewsSourceTopic.objects.get_or_create(
-                news_source=news_source,
-                topic=topic["name"]
-            )
-            topic.save()
-

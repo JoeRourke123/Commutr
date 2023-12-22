@@ -23,7 +23,7 @@ class ArticleService(object):
             A list of NewsArticle objects filtered according to the method parameters
         """
 
-        articles = NewsArticle.objects.filter(content__isnull=False)
+        articles = NewsArticle.objects.filter()
 
         if sources:
             articles = articles.filter(source__in=sources)
@@ -71,4 +71,4 @@ class ArticleService(object):
             The bytes for a PDF containing article content
         """
 
-        return bytes(article.content.content)
+        return bytes(article.content)

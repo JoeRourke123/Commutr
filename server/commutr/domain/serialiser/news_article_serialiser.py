@@ -1,3 +1,4 @@
+from commutr.domain.serialiser.topics_list_serialiser import NewsTopicsListSerialiser
 from rest_framework import serializers
 
 from commutr.db.news_article_model import NewsArticle
@@ -8,17 +9,13 @@ class NewsArticleSerialiser(serializers.ModelSerializer):
     """
     Serialises Django NewsArticles models to JSON
     """
-
-    # Converts topics relation to list of string topics which are related to the article
-    topics = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='topic'
-    )
-
     # When serialising an article, serialise the related news source object
     source = NewsSourceSerialiser(
         many=False,
+        read_only=True
+    )
+
+    topics = NewsTopicsListSerialiser(
         read_only=True
     )
 

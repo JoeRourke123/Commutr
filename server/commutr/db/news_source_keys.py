@@ -45,3 +45,6 @@ class NewsSourceKeys(models.Model):
         default=None,
         editable=False
     )
+
+    class Meta:
+        pass

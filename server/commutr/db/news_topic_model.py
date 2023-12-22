@@ -9,3 +9,6 @@ class NewsTopic(models.Model):
         max_length=128,
         primary_key=True
     )
+
+    class Meta:
+        pass

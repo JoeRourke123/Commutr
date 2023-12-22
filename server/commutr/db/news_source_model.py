@@ -15,7 +15,7 @@ class NewsSource(models.Model):
     Represents a single news source/vendor
     """
 
-    id = models.UUIDField(default=uuid.uuid4, primary_key=True, db_column="source_id")  # Unique identifier used for sources internally by us
+    id = models.CharField(default=uuid.uuid4, primary_key=True, db_column="source_id", max_length=36)  # Unique identifier used for sources internally by us
 
     name = models.CharField(db_column="source_name", editable=False, max_length=128)    # e.g. The Guardian
 

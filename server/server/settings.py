@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_celery_beat',
     'commutr',
+    'djongo'
 ]
 
 MIDDLEWARE = [
@@ -128,7 +129,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -143,3 +144,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 NOTION_API_TOKEN = os.environ["commutr_notion_token"]
 NEWS_SOURCES_BASE_ID = os.environ["commutr_news_source_notion_id"]
+
+ENFORCE_SCHEMA = False

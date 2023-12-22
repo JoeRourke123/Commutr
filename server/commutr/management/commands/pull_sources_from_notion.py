@@ -9,6 +9,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Pulling news sources from Notion")
 
-        reload_news_sources_from_notion().apply()
+        reload_news_sources_from_notion()
 
         print("Successfully pulled news sources")

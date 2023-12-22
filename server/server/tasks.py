@@ -6,19 +6,22 @@ def setup_rss_job():
     Setup periodic RSS job as a scheduled task if it doesn't already exist
     """
 
-    schedule, _ = IntervalSchedule.objects.get_or_create(
-        every=20,
-        period=IntervalSchedule.MINUTES,
-    )
-
-    task, created = PeriodicTask.objects.get_or_create(
-        interval=schedule,
-        name='Periodic fetch of RSS Feeds and Article Content',
-        task='commutr.domain.rss.run_rss_workers',
-    )
-
-    if created:
-        task.save()
+    # schedule, created = IntervalSchedule.objects.get_or_create(
+    #     every=20,
+    #     period=IntervalSchedule.MINUTES,
+    # )
+    #
+    # if created:
+    #     schedule.save()
+    #
+    # task, created = PeriodicTask.objects.get_or_create(
+    #     interval_id=schedule.id,
+    #     name='Periodic fetch of RSS Feeds and Article Content',
+    #     task='commutr.domain.rss.run_rss_workers',
+    # )
+    #
+    # if created:
+    #     task.save()
 
 
 def setup_notion_job():
