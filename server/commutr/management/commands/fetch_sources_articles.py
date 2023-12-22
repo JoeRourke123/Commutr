@@ -22,7 +22,7 @@ class Command(BaseCommand):
         news_source = NewsSource.objects.get(name=source_name)
 
         if fetch_new_articles == 'y':
-            get_rss_articles(news_source).apply()
+            get_rss_articles(news_source)
 
         articles = NewsArticle.objects.filter()
 

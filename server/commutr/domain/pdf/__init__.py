@@ -1,5 +1,4 @@
 from commutr.celery import app
-from commutr.db.news_article_content_model import NewsArticleContent
 from commutr.db.news_article_model import NewsArticle
 from commutr.domain.pdf.util import PdfGenerator
 
@@ -21,11 +20,7 @@ def download_article_content_pdf(news_article: NewsArticle):
 
     print("Article content successfully fetched")
 
-    article_content = NewsArticleContent.objects.create(
-        article=news_article,
-        content=merged_pdf_page_bytes
-    )
-
-    article_content.save()
+    news_article.content = merged_pdf_page_bytes
+    news_article.save()
 
     print("Article content saved to db")

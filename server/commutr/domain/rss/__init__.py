@@ -5,8 +5,9 @@ import feedparser
 
 from commutr.celery import app
 from commutr.db.news_article_model import NewsArticle
-from commutr.db.news_article_topic_model import NewsArticleTopic
+from commutr.db.news_source_keys import NewsSourceKeys
 from commutr.db.news_source_model import NewsSource
+from commutr.db.news_topic_model import NewsTopic
 from commutr.domain.rss.util import get_rss_entry_data
 
 from django.db.utils import IntegrityError
@@ -39,48 +40,44 @@ def get_rss_articles(news_source: NewsSource):
 
     latest_article = news_source.latest_article
 
+    source_keys = NewsSourceKeys(**news_source.keys)
+
     for entry in rss_feed.entries:
         # Get the date of the published article
-        published_time: time.struct_time = get_rss_entry_data(news_source.published_key, entry)
-        published_datetime = datetime.fromtimestamp(time.mktime(published_time))
+        published_time: time.struct_time = get_rss_entry_data(source_keys.published_key, entry)
+        published_datetime = datetime.fromtimestamp(time.mktime(published_time)).replace(tzinfo=None)
 
         # If article was published before last fetch then we must have already scraped it
-        if published_datetime <= latest_article:
+        if published_datetime <= latest_article.replace(tzinfo=None):
             continue
+
+        topics = []
+
+        try:
+            # Get the topics from the RSS feed if they exist
+            topics_from_rss = get_rss_entry_data(source_keys.topics_key, entry)
+
+            topics = list(set(topics_from_rss))
+
+            topics = [{"topic": t} for t in topics]
+        except KeyError:
+            # Happens when we cannot find the topics in the RSS feed
+            pass
 
         # Create the new article with the data we fetched from the RSS feed, based on the news source's
         # specific field keys from the database
         article = NewsArticle.objects.create(
             source=news_source,
-            headline=get_rss_entry_data(news_source.headline_key, entry),
-            subtitle=get_rss_entry_data(news_source.subtitle_key, entry),
-            url=get_rss_entry_data(news_source.url_key, entry),
-            image=get_rss_entry_data(news_source.image_key, entry),
-            published=published_datetime
+            headline=get_rss_entry_data(source_keys.headline_key, entry),
+            subtitle=get_rss_entry_data(source_keys.subtitle_key, entry),
+            url=get_rss_entry_data(source_keys.url_key, entry),
+            image=get_rss_entry_data(source_keys.image_key, entry),
+            published=published_datetime,
+            topics=topics
         )
 
         article.save()
-
-        try:
-            # Get the topics from the RSS feed if they exist
-            topics = get_rss_entry_data(news_source.topics_key, entry)
-
-            for topic in topics:
-                try:
-                    # Create a new NewsArticleTopic for each topic belonging to the article.
-                    # TODO: add a way to retrieve topics in case they are not in the RSS feed.
-                    news_article_topic = NewsArticleTopic.objects.create(
-                        article=article,
-                        topic=topic
-                    )
-
-                    news_article_topic.save()
-                except IntegrityError:
-                    # Happens when topic/article combo is duplicated
-                    continue
-        except KeyError:
-            # Happens when we cannot find the topics in the RSS feed
-            continue
+        latest_article = max(latest_article, article.published)
 
     news_source.latest_article = latest_article
     news_source.save()
