@@ -23,7 +23,7 @@ class ArticleService(object):
             A list of NewsArticle objects filtered according to the method parameters
         """
 
-        articles = NewsArticle.objects.filter()
+        articles = NewsArticle.objects.filter(content__isnull=False)
 
         if sources:
             articles = articles.filter(source__in=sources)

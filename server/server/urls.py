@@ -11,6 +11,7 @@ from commutr.controller.fallback_article_fetch_controller import FallbackArticle
 
 router = DefaultRouter()
 router.register(r'api', FallbackArticleFetchController)
+router.register(r'api/digest', FallbackArticleFetchController)
 
 # urlpatterns is imported by Django to know which URLs the server should accept
 urlpatterns = router.urls
