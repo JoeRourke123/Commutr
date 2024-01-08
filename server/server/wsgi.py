@@ -18,6 +18,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings')
 # App Startup Code
 setup_rss_job()
 
+from django.apps import apps
+
+for app in apps.get_app_configs():
+    print(app)
+
 application = get_wsgi_application()
 
 

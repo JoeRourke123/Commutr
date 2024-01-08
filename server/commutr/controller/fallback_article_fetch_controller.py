@@ -3,6 +3,7 @@ import uuid
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from django.http import HttpResponse
 
@@ -19,11 +20,13 @@ class FallbackArticleFetchController(viewsets.ReadOnlyModelViewSet):
     """
     article_service = ArticleService()
 
+    permission_classes = [IsAuthenticated]
+
     # These are required by Django ViewSets
     queryset = NewsArticle.objects.all()
     serializer_class = NewsArticleSerialiser
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], url_path="/")
     def articles(self, request):
         """
         This GET endpoints /api/articles returns the most recent 10 articles
@@ -42,7 +45,7 @@ class FallbackArticleFetchController(viewsets.ReadOnlyModelViewSet):
 
         return Response(serialised.data)
 
-    @action(detail=False, methods=['get'], url_path="source/(?P<pk>[\w-]+)/articles")
+    @action(detail=False, methods=['get'], url_path="source/(?P<pk>[\w-]+)")
     def articles_by_source(self, request, pk: uuid.UUID):
         """
         This GET endpoint api/source/SOURCE_ID/articles returns the articles from a given source.
@@ -63,7 +66,7 @@ class FallbackArticleFetchController(viewsets.ReadOnlyModelViewSet):
 
         return Response(serialised.data)
 
-    @action(detail=False, methods=['get'], url_path="article/(?P<pk>[\w-]+)")
+    @action(detail=False, methods=['get'], url_path="(?P<pk>[\w-]+)")
     def article_with_content(self, request, pk: uuid.UUID):
         """
         This GET endpoint /api/article/ARTICLE_ID returns the PDF contents of the specified article
