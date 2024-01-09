@@ -1,8 +1,9 @@
 import uuid
 
-from django.db import models
+from djongo import models
 
 from commutr.db.news_source_model import NewsSource
+from commutr.db.news_topic_model import NewsTopic
 
 
 class NewsArticle(models.Model):
@@ -11,10 +12,11 @@ class NewsArticle(models.Model):
     """
 
     # Our randomly generated UUID for the article
-    id = models.UUIDField(
+    id = models.CharField(
         default=uuid.uuid4,
         primary_key=True,
-        editable=False
+        editable=False,
+        max_length=36
     )
 
     # The publication the article comes from, represented as a relation to the NewsSource table.
@@ -23,7 +25,8 @@ class NewsArticle(models.Model):
         on_delete=models.CASCADE,
         related_name="articles",
         db_column="news_source_id",
-        editable=False
+        editable=False,
+        max_length=128
     )
 
     headline = models.CharField(
@@ -60,9 +63,23 @@ class NewsArticle(models.Model):
 
     author = models.CharField(
         db_column="article_author",
-        editable=False
+        editable=False,
+        max_length=256
+    )
+
+    topics = models.ArrayField(
+        db_column="article_topics",
+        model_container=NewsTopic,
+        default=[]
+    )
+
+    content = models.BinaryField(
+        db_column="article_content",
+        editable=False,
+        null=True,
+        default=None
     )
 
     class Meta:
-        db_table = "news_article"   # Actual table name in Postgres
-        ordering = ['-published']   # Orders the table by newest articles first
+        db_table = "news_article"  # Actual table name in Postgres
+        ordering = ['-published']  # Orders the table by newest articles first

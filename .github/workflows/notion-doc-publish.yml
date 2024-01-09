@@ -1,0 +1,51 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Notion Documentation Publish
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server # <- sets the directory from which to run the bash script
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - uses: getsentry/action-setup-venv@v1.0.4
+      id: venv
+      with:
+        venv-dir: './server/venv'
+        python-version: 3.10.7
+        cache-dependency-path: |
+          server/requirements.txt
+        install-cmd: pip install -r server/requirements.txt
+    - name: Set Environment Variables
+      run: |
+        echo "commutr_postgres_password=${{ secrets.COMMUTR_POSTGRES_PASSWORD }}" >> $GITHUB_ENV
+    - name: Generate Markdown of Docs
+      run: |
+        pydoc-markdown -p commutr.controller -p commutr.db -p commutr.domain -p commutr.management.commands '{
+          renderer: {
+            type: markdown,
+            descriptive_class_title: false, docstrings_as_blockquote: true, render_typehint_in_data_header: true,
+            render_toc: false, data_code_block: true, insert_header_anchors: false
+          }
+        }'  > docs/commutr.md
+
+    - name: Replace Broken Code in Notion Library
+      run: |
+        sed -i 's/100000/100/g' venv/lib/python3.10/site-packages/notion/store.py
+
+    - name: Add Docs to Notion
+      run: |
+        source venv/bin/activate &&
+        python manage.py publish_docs_to_notion ${{ secrets.NOTIONTOKENV2 }} ${{ secrets.NOTIONDOCUMENTATIONPAGEURL }}

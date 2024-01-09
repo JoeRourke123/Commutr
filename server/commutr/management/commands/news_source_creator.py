@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from django.db.models import ForeignObjectRel, ForeignObject, UUIDField
 
 from commutr.db.news_source_model import NewsSource
-from commutr.db.news_source_topic_model import NewsSourceTopic
+from commutr.db.news_topic_model import NewsTopic
 from commutr.domain.util.get_raw_rss_feed import get_raw_rss_feed
 
 
@@ -48,7 +48,7 @@ class Command(BaseCommand):
         topic = input("Enter a topic the source covers > ")
 
         while topic != "":
-            new_topic = NewsSourceTopic.objects.create(
+            new_topic = NewsTopic.objects.create(
                 news_source=new_source,
                 topic=topic
             )

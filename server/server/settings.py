@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_celery_beat',
     'commutr',
+    'djongo'
 ]
 
 MIDDLEWARE = [
@@ -90,12 +91,8 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'commutr',
-        'USER': 'postgres',
-        'PASSWORD': os.environ["commutr_postgres_password"],
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'djongo',
+        'NAME': 'commutr-mongo'
     }
 }
 
@@ -132,7 +129,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -144,3 +141,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+NOTION_API_TOKEN = os.environ["commutr_notion_token"]
+NEWS_SOURCES_BASE_ID = os.environ["commutr_news_source_notion_id"]
+
+ENFORCE_SCHEMA = False
