@@ -14,13 +14,17 @@ def download_article_content_pdf(news_article: NewsArticle):
     Returns:
         N/A.
     """
-    pdf_file = PdfGenerator([news_article.url]).main()
+    try:
+        pdf_file = PdfGenerator([news_article.url]).main()
 
-    merged_pdf_page_bytes: bytes = PdfGenerator.merge_pdf_pages(pdf_file)
+        merged_pdf_page_bytes: bytes = PdfGenerator.merge_pdf_pages(pdf_file)
 
-    print("Article content successfully fetched")
+        print("Article content successfully fetched")
 
-    news_article.content = merged_pdf_page_bytes
-    news_article.save()
+        news_article.content = merged_pdf_page_bytes
+        news_article.save()
 
-    print("Article content saved to db")
+        print("Article content saved to db")
+    except Exception:
+        print("Something went wrong when fetching this article's content. Skipping...")
+        news_article.delete()

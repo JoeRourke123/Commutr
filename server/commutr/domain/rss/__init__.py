@@ -7,6 +7,7 @@ from commutr.celery import app
 from commutr.db.news_article_model import NewsArticle
 from commutr.db.news_source_keys import NewsSourceKeys
 from commutr.db.news_source_model import NewsSource
+from commutr.domain.pdf import download_article_content_pdf
 from commutr.db.news_topic_model import NewsTopic
 from commutr.domain.rss.util import get_rss_entry_data
 
@@ -78,6 +79,9 @@ def get_rss_articles(news_source: NewsSource):
 
         article.save()
         latest_article = max(latest_article, article.published)
+
+        # Fetch the article content through an async celery task
+        download_article_content_pdf(article)
 
     news_source.latest_article = latest_article
     news_source.save()
